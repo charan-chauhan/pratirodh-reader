@@ -1,11 +1,12 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 import { StoryImage } from '@/components/story-image';
 import { SearchPageLink } from '@/components/search-page-link';
 import { Search, ArrowLeft, ArrowUpRight } from '@/components/icons';
 import { searchArticles, type FeedPage } from '@/lib/wordpress';
-import { articlePath, formatDate } from '@/lib/paths';
+import { articlePath, formatDate, sectionLabel } from '@/lib/paths';
 import { normalizeSearch, SEARCH_QUERY_LIMIT } from '@/lib/news-settings';
 
 export const metadata: Metadata = {
@@ -28,9 +29,9 @@ export default async function SearchPage({ searchParams }: Props) {
     catch { error = 'We couldn’t reach the newsroom. Please try your search again.'; }
   }
   return <><Header/><main id="main" className="search-page">
-    <Link href="/" className="back-link"><ArrowLeft size={16}/> Back to your brief</Link>
+    <Link href="/" className="back-link"><ArrowLeft size={16}/> Back to All Stories</Link>
     <div className="article-eyebrow">THE PRATIRODH ARCHIVE</div>
-    <h1>Every story starts<br/>with <em>a question.</em></h1>
+    <h1>Search the Archive</h1>
     <p className="search-intro">Search all our published stories by topic, person, or keyword.</p>
     <form action="/search/" method="get" role="search" className="story-search-form">
       <label htmlFor="story-search">Search Stories</label>
@@ -42,12 +43,12 @@ export default async function SearchPage({ searchParams }: Props) {
         {result.articles.length ? <>
           <div className="search-results-list">{result.articles.map(article => <article className="search-result" key={article.id}>
             <Link href={articlePath(article.slug, article.category)} className="search-result-image" tabIndex={-1} aria-hidden="true"><StoryImage src={article.image} alt="" sizes="(max-width: 760px) 100px, 180px"/></Link>
-            <div><div className="search-result-meta"><span>{article.category.replace(/-/g, ' ')}</span><time dateTime={article.date}>{formatDate(article.date)}</time></div><h3><Link href={articlePath(article.slug, article.category)}>{article.title}</Link></h3><p>{article.summary.slice(0, 180)}{article.summary.length > 180 ? '…' : ''}</p><span className="search-result-author">{article.author}</span></div><ArrowUpRight size={19} className="search-result-arrow" aria-hidden="true"/>
+            <div><div className="search-result-meta"><span>{sectionLabel(article.category)}</span><time dateTime={article.date}>{formatDate(article.date)}</time></div><h3><Link href={articlePath(article.slug, article.category)}>{article.title}</Link></h3><p>{article.summary.slice(0, 180)}{article.summary.length > 180 ? '…' : ''}</p><span className="search-result-author">{article.author}</span></div><ArrowUpRight size={19} className="search-result-arrow" aria-hidden="true"/>
           </article>)}</div>
           <nav className="search-pagination" aria-label="Search results pages">
             {page > 1 ? <SearchPageLink href={searchPath(query, page - 1)} label="← Previous"/> : <span/>}<span>Page {page} of {result.totalPages.toLocaleString('en-IN')}</span>{page < result.totalPages ? <SearchPageLink href={searchPath(query, page + 1)} label="Next →"/> : <span/>}
           </nav>
         </> : <div className="search-message"><Search size={30}/><h3>No stories found.</h3><p>Try a different keyword or a shorter phrase.</p>{page > 1 && <Link className="text-button" href={searchPath(query, 1)}>Back to First Page</Link>}</div>}
       </section> : <div className="search-message search-welcome"><Search size={28}/><p>A name. A place. An idea.<br/>Find the reporting behind what matters to you.</p></div>}
-  </main></>;
+  </main><Footer/></>;
 }

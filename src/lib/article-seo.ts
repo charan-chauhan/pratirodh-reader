@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 import type { Article } from './content';
-import { articlePath } from './paths';
+import { articlePath, sectionLabel } from './paths';
 import { pageSafeUploads, siteUrl } from './site';
 
-/** Shared by server-rendered articles and the active story in the reader. */
+/** Shared metadata and structured data for published articles. */
 export function articleSeo(article: Article) {
   return {
     title: `${article.title} | Pratirodh`,
     description: article.summary.slice(0, 180),
     url: `${siteUrl}${articlePath(article.slug, article.category)}`,
-    section: article.category.replace(/-/g, ' '),
+    section: sectionLabel(article.category),
     image: article.image && new URL(pageSafeUploads(article.image), siteUrl).href,
     imageAlt: article.imageAlt,
     card: article.image ? 'summary_large_image' as const : 'summary' as const,

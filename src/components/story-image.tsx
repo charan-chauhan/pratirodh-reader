@@ -18,7 +18,7 @@ function StoryImageContent({ src, alt, priority = false, eager = false, hero = f
       sizes={sizes || (hero ? '(max-width: 790px) 90vw, 742px' : '(max-width: 760px) 94vw, 580px')}
       loading={priority || eager ? 'eager' : 'lazy'} fetchPriority={priority ? 'high' : 'auto'}
       onLoad={() => setLoaded(true)} onError={() => setFailed(true)}/>
-    {pending && <span className="image-loading" role="status"><span className="reader-spinner" aria-hidden="true"/><span>Loading image…</span></span>}
+    {pending && <span className="image-loading" role="status"><span className="loading-spinner" aria-hidden="true"/><span>Loading image…</span></span>}
     {placeholder && <span className="image-placeholder-label">Image unavailable</span>}
   </span>;
 }

@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
       if (!search || search.length > SEARCH_QUERY_LIMIT) return NextResponse.json({ error: 'Enter a search of 1–200 characters.' }, { status: 400 });
       return NextResponse.json(await searchArticles(search, Number(page)));
     }
-    if (Number(page) > Math.ceil(FEED_LIMIT / FEED_PAGE_SIZE)) return NextResponse.json({ error: 'The daily brief contains up to 100 stories.' }, { status: 400 });
+    if (Number(page) > Math.ceil(FEED_LIMIT / FEED_PAGE_SIZE)) return NextResponse.json({ error: 'The latest-news list contains up to 100 stories.' }, { status: 400 });
     const data = await getFeed(Number(page));
     return NextResponse.json(data);
   } catch { return NextResponse.json({ error: 'News could not be loaded. Please retry.' }, { status: 502 }); }

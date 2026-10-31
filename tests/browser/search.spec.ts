@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 test.setTimeout(120000);
 
-test('the brief starts with 20 latest stories and search covers the full archive', async ({ page, request }, testInfo) => {
+test('the home page starts with 20 latest stories and search covers the full archive', async ({ page, request }, testInfo) => {
   const latestResponse = await request.get('/api/news?page=1');
   expect(latestResponse.status()).toBe(200);
   const latest = await latestResponse.json();
@@ -11,8 +11,8 @@ test('the brief starts with 20 latest stories and search covers the full archive
   const dates = latest.articles.map((article: { date: string }) => Date.parse(article.date));
   expect(dates).toEqual([...dates].sort((a, b) => b - a));
   await page.goto('/');
-  await expect(page.locator('.story-card')).toHaveCount(20);
-  await expect(page.locator('.brief-counter')).toContainText('/ 100');
+  await expect(page.locator('.news-home .news-card:not(.home-section .news-card)')).toHaveCount(20);
+  await expect(page.locator('.load-more-area')).toContainText('Showing 20 of 100');
   await expect(page.getByText('MADE FOR THE CURIOUS')).toHaveCount(0);
   await page.getByRole('link', { name: 'Search Stories', exact: true }).click();
   await page.getByRole('searchbox', { name: 'Search Stories' }).fill('India');
@@ -42,7 +42,7 @@ test('feed pagination stops at 100, and empty searches and invalid inputs are ha
   expect((await request.get('/api/news?q=%20%20')).status()).toBe(400);
   expect((await request.get(`/api/news?q=${'a'.repeat(201)}`)).status()).toBe(400);
   await page.goto('/search/');
-  await expect(page.getByRole('heading', { name: /Every story starts/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Search the Archive', exact: true })).toBeVisible();
   const query = 'pratirodh-no-matching-story-98374829';
   await page.getByRole('searchbox', { name: 'Search Stories' }).fill(query);
   await page.getByRole('searchbox', { name: 'Search Stories' }).press('Enter');

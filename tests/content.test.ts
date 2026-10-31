@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { cleanBody, normalizeArticle, plainText, safeUrl, summarize } from '../src/lib/content';
-import { articlePath } from '../src/lib/paths';
+import { articlePath, sectionLabel, sectionPath } from '../src/lib/paths';
 
 test('WordPress HTML is decoded without exposing active content', () => {
   assert.equal(plainText('<p>हिंदी &amp; news&#8217;s</p><script>alert(1)</script>'), 'हिंदी & news’s');
@@ -43,4 +43,14 @@ test('category URLs prefer an exposed primary category, then a specific category
   assert.equal(articlePath(article.slug, article.category), '/politics-society/a-story/');
   assert.equal(normalizeArticle({ ...post, meta: { _yoast_wpseo_primary_category: '7' } }).category, 'earth-and-ecology');
   assert.equal(articlePath('हिंदी खबर', 'समाचार'), '/%E0%A4%B8%E0%A4%AE%E0%A4%BE%E0%A4%9A%E0%A4%BE%E0%A4%B0/%E0%A4%B9%E0%A4%BF%E0%A4%82%E0%A4%A6%E0%A5%80%20%E0%A4%96%E0%A4%AC%E0%A4%B0/');
+});
+test('section labels read as editorial names', () => {
+  assert.equal(sectionLabel('politics-society'), 'Politics & Society');
+  assert.equal(sectionLabel('earth-and-ecology'), 'Earth and Ecology');
+  assert.equal(sectionLabel('the-new-feudals'), 'The New Feudals');
+  assert.equal(sectionLabel('news'), 'News');
+});
+test('section paths match the existing WordPress category URLs', () => {
+  assert.equal(sectionPath('world-view'), '/category/world-view/');
+  assert.equal(sectionPath('world-view', 3), '/category/world-view/?page=3');
 });

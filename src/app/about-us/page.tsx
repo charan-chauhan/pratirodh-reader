@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Header } from '@/components/header';
+import { Footer } from '@/components/footer';
 import { ArrowLeft } from '@/components/icons';
 
 export const metadata: Metadata = {
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function AboutUs() {
   return <><Header/><main id="main" className="article-page about-page">
-    <Link href="/" className="back-link"><ArrowLeft size={16}/> Back to your brief</Link>
+    <Link href="/" className="back-link"><ArrowLeft size={16}/> Back to All Stories</Link>
     <div className="article-eyebrow">INDEPENDENT VOICES · ESSENTIAL STORIES</div>
     <h1>About Us</h1>
     <div className="article-body">
@@ -32,5 +33,5 @@ export default function AboutUs() {
         <p>प्रतिरोध डॉट कॉम देश और दुनिया की कई अहम खबरों को आमजन तक पहुंचाने का एक माध्यम है. प्रतिरोध डॉट कॉम के ज़रिए हम राष्ट्रीय, अंतरराष्ट्रीय, सामाजिक-राजनीतिक आंदोलनों, राजनीति और विचारधारा, अर्थ जगत, खेल, मनोरंजन, कला और साहित्य, रंगमंच और सिनेमा, मीडिया और अन्य कई महत्वपूर्ण पहलुओं की ख़ास ख़बरें आपतक लेकर आते हैं. हमारा प्रयास है कि हम ऐसी सामग्री आपतक पहुंचाएं जिसे अधिकतर जनमाध्यम या तो दिखा नहीं रहे और या फिर दिखाना नहीं चाहते. हमारा प्रयास है कि लगातार आपके समक्ष ऐसी एक्सक्लूसिव और निर्भीक जानकारी पहुंचती रहे.</p>
       </section>
     </div>
-  </main></>;
+  </main><Footer/></>;
 }

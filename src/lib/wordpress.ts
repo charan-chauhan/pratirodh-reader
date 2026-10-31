@@ -148,6 +148,14 @@ export async function getFeed(page = 1): Promise<FeedPage> {
   const result = await request({ page: String(page), per_page: String(FEED_PAGE_SIZE), orderby: 'date', order: 'desc' });
   return { ...result, articles: result.articles.map(compactArticle), page, total: Math.min(FEED_LIMIT, result.total), totalPages: Math.min(Math.ceil(FEED_LIMIT / FEED_PAGE_SIZE), result.totalPages) };
 }
+export async function getCategoryFeed(slug: string, page = 1, perPage = FEED_PAGE_SIZE): Promise<FeedPage | null> {
+  if (!/^[a-z0-9-]{1,100}$/.test(slug) || !Number.isInteger(page) || page < 1 || page > 9999) throw new WordPressError(400);
+  const categories = z.array(categorySchema).parse(await referenceList(apiUrl(), 'categories', 'id,slug'));
+  const category = categories.find(item => item.slug === slug);
+  if (!category) return null;
+  const result = await request({ categories: String(category.id), page: String(page), per_page: String(perPage), orderby: 'date', order: 'desc' });
+  return { ...result, articles: result.articles.map(compactArticle), page };
+}
 export async function searchArticles(query: string, page = 1): Promise<FeedPage> {
   const search = normalizeSearch(query);
   if (!search || search.length > SEARCH_QUERY_LIMIT || !Number.isInteger(page) || page < 1 || page > 9999) throw new WordPressError(400);
