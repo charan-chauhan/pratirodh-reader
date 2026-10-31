@@ -10,9 +10,9 @@ The supplied audit reported Apache/PHP hosting and an expired self-signed certif
 
 Keep WordPress on current hosting and run Next.js on a Node-compatible service, such as Vercel, unless the purchased GoDaddy plan is confirmed to support a persistent Node runtime. Public requests cannot establish the plan, SSH access, memory limits, Node support or backup facilities.
 
-The application uses server rendering, route handlers, image optimization, ISR and a webhook. A plain static-file upload does not run those features. `output: 'standalone'` prepares a Node deployment; it does not establish host compatibility.
+The application uses server rendering, route handlers, image optimization, ISR and a webhook. A plain static-file upload does not run those features.
 
-For standalone Node hosting, copy `public/` into `.next/standalone/public/` and `.next/static/` into `.next/standalone/.next/static/` after building. Run the generated server under a process manager and HTTPS proxy. Managed Next.js platforms can use their native build integration.
+GoDaddy Node.js Hosting deploys the `main` branch of `charan-chauhan/pratirodh-reader`. It installs `dependencies` only, runs `npm run build`, then `npm start`. `npm start` is the standard `next start`, which reads `PORT` from the platform and listens on all interfaces, so build tooling must stay in `dependencies`. The custom standalone launcher caused a runtime `InvariantError` on GoDaddy and is no longer used.
 
 ## Launch steps
 

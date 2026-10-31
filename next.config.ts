@@ -4,8 +4,6 @@ const cms = new URL(cmsOrigin);
 const config: NextConfig = {
   poweredByHeader: false,
   trailingSlash: true,
-  output: 'standalone',
-  outputFileTracingRoot: process.cwd(),
   images: {
     remotePatterns: [
       { protocol: 'http', hostname: 'www.pratirodh.com', pathname: '/wp-content/uploads/**' },
