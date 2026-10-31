@@ -2,6 +2,7 @@ import 'server-only';
 import { cache } from 'react';
 import { unstable_cache } from 'next/cache';
 import { normalizeArticle, postSchema, type Article } from './content';
+import { wordpressApiUrl } from './site';
 import { z } from 'zod';
 import { FEED_LIMIT, FEED_PAGE_SIZE, SEARCH_QUERY_LIMIT, normalizeSearch } from './news-settings';
 
@@ -45,7 +46,7 @@ function rememberedArticle(slug: string) {
 }
 const compactArticle = (article: Article): Article => ({ ...article, body: '' });
 function apiUrl() {
-  const url = new URL(process.env.WORDPRESS_API_URL || 'http://www.pratirodh.com/wp-json/wp/v2');
+  const url = new URL(wordpressApiUrl);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Invalid WordPress API URL');
   return url.href.replace(/\/$/, '');
 }

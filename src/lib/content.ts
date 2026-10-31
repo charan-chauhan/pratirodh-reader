@@ -1,6 +1,7 @@
 import sanitizeHtml from 'sanitize-html';
 import { decode } from 'he';
 import { z } from 'zod';
+import { fromLegacyUploads } from './site';
 
 const rendered = z.object({ rendered: z.string() });
 export const postSchema = z.object({
@@ -90,7 +91,7 @@ export function normalizeArticle(value: unknown): Article {
     id: post.id, slug: post.slug, title: plainText(post.title.rendered),
     category: category?.slug || 'news',
     summary: summarize(post.excerpt.rendered, post.content.rendered, post.meta?.news_summary),
-    body: cleanBody(post.content.rendered), image: safeUrl(image),
+    body: cleanBody(fromLegacyUploads(post.content.rendered)), image: safeUrl(image && fromLegacyUploads(image)),
     imageAlt: plainText(media?.alt_text || post.title.rendered),
     author: plainText(post._embedded?.author?.[0]?.name || 'Pratirodh Bureau'),
     date: post.date_gmt.endsWith('Z') ? post.date_gmt : post.date_gmt + 'Z',
