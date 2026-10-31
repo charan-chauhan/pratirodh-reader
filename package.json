@@ -1,0 +1,38 @@
+{
+  "name": "pratirodh-reader",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build --webpack",
+    "start": "node scripts/start-local.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "playwright test",
+    "verify:github": "node scripts/verify-github.mjs"
+  },
+  "dependencies": {
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "sanitize-html": "^2.17.0",
+    "he": "^1.2.0",
+    "lucide-react": "latest",
+    "zod": "^4.0.0",
+    "@tailwindcss/postcss": "^4.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.9.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/sanitize-html": "^2.16.0",
+    "@types/he": "^1.2.3"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.0",
+    "@playwright/test": "latest"
+  }
+}

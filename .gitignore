@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+!.env.production
+.netrc
+*.pem
+*.sql
+*.sql.gz
+backups/
+.DS_Store
+test-results/
+playwright-report/
+*.tsbuildinfo

@@ -1,0 +1,52 @@
+import { test, expect } from '@playwright/test';
+test.setTimeout(120000);
+
+test('the brief starts with 20 latest stories and search covers the full archive', async ({ page, request }, testInfo) => {
+  const latestResponse = await request.get('/api/news?page=1');
+  expect(latestResponse.status()).toBe(200);
+  const latest = await latestResponse.json();
+  expect(latest.articles).toHaveLength(20);
+  expect(latest.total).toBe(100);
+  expect(latest.totalPages).toBe(5);
+  const dates = latest.articles.map((article: { date: string }) => Date.parse(article.date));
+  expect(dates).toEqual([...dates].sort((a, b) => b - a));
+  await page.goto('/');
+  await expect(page.locator('.story-card')).toHaveCount(20);
+  await expect(page.locator('.brief-counter')).toContainText('/ 100');
+  await expect(page.getByText('MADE FOR THE CURIOUS')).toHaveCount(0);
+  await page.getByRole('link', { name: 'Search Stories', exact: true }).click();
+  await page.getByRole('searchbox', { name: 'Search Stories' }).fill('India');
+  await page.getByRole('button', { name: 'Search', exact: true }).click();
+  await expect(page.locator('.search-result')).toHaveCount(20, { timeout: 45000 });
+  await expect(page.locator('.search-results-heading')).toContainText('India');
+  const archive = await (await request.get('/api/news?q=India')).json();
+  expect(archive.total).toBeGreaterThan(100);
+  expect(archive.articles).toHaveLength(20);
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: `test-results/${testInfo.project.name}-search.png` });
+  await page.getByRole('link', { name: 'Next →', exact: true }).click();
+  await expect(page.locator('.search-pagination')).toContainText('Page 2', { timeout: 45000 });
+  expect(new URL(page.url()).searchParams.get('q')).toBe('India');
+  const title = await page.locator('.search-result h3 a').first().innerText();
+  await page.locator('.search-result h3 a').first().click();
+  await expect(page.locator('.article-page h1')).toHaveText(title, { timeout: 45000 });
+  await expect(page).toHaveTitle(`${title} | Pratirodh`);
+});
+
+test('feed pagination stops at 100, and empty searches and invalid inputs are handled', async ({ page, request }) => {
+  const lastPage = await (await request.get('/api/news?page=5')).json();
+  expect(lastPage.articles).toHaveLength(20);
+  expect(lastPage.total).toBe(100);
+  expect((await request.get('/api/news?page=6')).status()).toBe(400);
+  expect((await request.get('/api/news?q=%20%20')).status()).toBe(400);
+  expect((await request.get(`/api/news?q=${'a'.repeat(201)}`)).status()).toBe(400);
+  await page.goto('/search/');
+  await expect(page.getByRole('heading', { name: /Every story starts/ })).toBeVisible();
+  const query = 'pratirodh-no-matching-story-98374829';
+  await page.getByRole('searchbox', { name: 'Search Stories' }).fill(query);
+  await page.getByRole('searchbox', { name: 'Search Stories' }).press('Enter');
+  await expect(page.getByRole('heading', { name: 'No stories found.' })).toBeVisible({ timeout: 45000 });
+  await expect(page.getByRole('searchbox', { name: 'Search Stories' })).toHaveValue(query);
+  await expect(page.locator('.search-result')).toHaveCount(0);
+});
