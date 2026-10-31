@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import type { Article } from './content';
 import { articlePath } from './paths';
-import { siteUrl } from './site';
+import { pageSafeUploads, siteUrl } from './site';
 
 /** Shared by server-rendered articles and the active story in the reader. */
 export function articleSeo(article: Article) {
@@ -10,7 +10,7 @@ export function articleSeo(article: Article) {
     description: article.summary.slice(0, 180),
     url: `${siteUrl}${articlePath(article.slug, article.category)}`,
     section: article.category.replace(/-/g, ' '),
-    image: article.image,
+    image: article.image && new URL(pageSafeUploads(article.image), siteUrl).href,
     imageAlt: article.imageAlt,
     card: article.image ? 'summary_large_image' as const : 'summary' as const,
   };
